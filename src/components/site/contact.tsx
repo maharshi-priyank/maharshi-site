@@ -6,8 +6,8 @@ import { Accent, Magnetic, Pill, Reveal, RevealLines, RollText } from "./motion-
 
 export function Stack() {
   return (
-    <section id="stack" className="pad relative bg-cream py-32 text-ink">
-      <div className="relative mb-16">
+    <section id="stack" className="pad relative bg-cream py-24 text-ink md:py-32">
+      <div className="relative mb-12 md:mb-16">
         <p className="display mb-6 text-xs text-berry">(Toolbox)</p>
         <h2 className="display relative text-[clamp(3rem,9vw,9rem)]">
           <Accent className="-top-6 right-[10%] text-[clamp(2rem,4vw,4rem)]">my kit</Accent>
@@ -80,7 +80,7 @@ export function Contact() {
   return (
     <footer id="contact" className="relative bg-ink">
       {/* CTA */}
-      <div className="pad pb-28 pt-36">
+      <div className="pad pb-20 pt-24 md:pb-28 md:pt-36">
         <p className="display mb-10 text-[0.7rem] text-cream/50">(Contact)</p>
         <h2 className="display text-[clamp(2.6rem,8.2vw,9rem)] !leading-[0.95]">
           <RevealLines
@@ -95,9 +95,9 @@ export function Contact() {
           />
         </h2>
 
-        <Reveal className="mt-16 flex flex-col gap-6 border-t border-cream/15 pt-8 md:flex-row md:items-center md:justify-between">
+        <Reveal className="mt-12 flex flex-col gap-6 border-t md:mt-16 border-cream/15 pt-8 md:flex-row md:items-center md:justify-between">
           <button onClick={copy} data-cursor={copied ? "Copied!" : "Copy"} className="group text-left" aria-label={`Copy email ${personal.email}`}>
-            <span className="relative text-[clamp(1.3rem,3.2vw,2.8rem)] font-semibold tracking-tight">
+            <span className="relative break-all text-[clamp(1.15rem,3.2vw,2.8rem)] font-semibold tracking-tight sm:break-normal">
               {personal.email}
               <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-brand transition-transform duration-500 ease-[cubic-bezier(.76,0,.24,1)] group-hover:scale-x-100" />
             </span>
@@ -122,7 +122,7 @@ export function Contact() {
         viewport={{ once: true }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="pad grid grid-cols-2 gap-x-6 gap-y-12 pb-16 pt-16 md:grid-cols-4">
+        <div className="pad grid grid-cols-2 gap-x-6 gap-y-10 pb-12 pt-12 md:grid-cols-4 md:gap-y-12 md:pb-16 md:pt-16">
           <Col title="Navigate">
             {nav.map((l) => (
               <a key={l.href} href={l.href}>

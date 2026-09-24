@@ -15,27 +15,27 @@ function ExpCard({ job, i, total, progress }: { job: (typeof experience)[number]
   // Each card shrinks slightly as later cards stack over it.
   const scale = useTransform(progress, [i / total, 1], [1, 1 - (total - i) * 0.04]);
   return (
-    <div className="sticky flex h-[88svh] items-start" style={{ top: `calc(6rem + ${i * 1.75}rem)` }}>
+    <div className="mb-5 md:sticky md:mb-0 md:flex md:h-[88svh] md:items-start md:[top:var(--stack-top)]" style={{ "--stack-top": `calc(6rem + ${i * 1.75}rem)` } as React.CSSProperties}>
       <motion.article
         style={{ scale }}
-        className={`${cardThemes[i % cardThemes.length]} w-full origin-top rounded-[2rem] p-6 shadow-[0_-10px_60px_rgb(0_0_0/0.25)] md:p-12`}
+        className={`${cardThemes[i % cardThemes.length]} w-full origin-top rounded-[1.5rem] p-6 max-md:!transform-none md:rounded-[2rem] md:p-12 md:shadow-[0_-10px_60px_rgb(0_0_0/0.25)]`}
       >
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={job.logo} alt="" className="size-14 rounded-2xl bg-white object-contain p-2" />
+            <img src={job.logo} alt="" className="size-12 shrink-0 rounded-2xl bg-white object-contain p-2 md:size-14" />
             <div>
               <h3 className="display text-[clamp(1.4rem,3vw,2.6rem)]">{job.company}</h3>
               <p className="text-sm font-semibold opacity-75">{job.role}</p>
             </div>
           </div>
-          <div className="display text-right text-xs opacity-75">
+          <div className="display flex gap-3 text-[0.65rem] opacity-75 sm:block sm:text-right sm:text-xs">
             <p>{job.period}</p>
-            <p className="mt-1">{job.location}</p>
+            <p className="sm:mt-1">{job.location}</p>
           </div>
         </div>
-        {job.headline && <p className="marker mt-8 -rotate-2 text-[clamp(1.6rem,3vw,2.6rem)]">{job.headline}</p>}
-        <ul className="mt-8 grid gap-4 md:grid-cols-2">
+        {job.headline && <p className="marker mt-6 -rotate-2 text-[clamp(1.35rem,3vw,2.6rem)] md:mt-8">{job.headline}</p>}
+        <ul className="mt-6 grid gap-3 md:mt-8 md:grid-cols-2 md:gap-4">
           {job.points.map((p) => (
             <li key={p} className="flex gap-3 text-[0.95rem] leading-relaxed opacity-90">
               <span className="mt-2 size-1.5 shrink-0 rounded-full bg-current" />
@@ -59,7 +59,7 @@ export function Experience() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   return (
-    <section id="experience" className="pad relative bg-sky pb-24 pt-32 text-ink">
+    <section id="experience" className="pad relative bg-sky pb-16 pt-24 text-ink md:pb-24 md:pt-32">
       <div className="relative mb-12">
         <p className="display mb-6 text-xs text-berry">(Experience)</p>
         <h2 className="display relative text-[clamp(3rem,9vw,9rem)]">
@@ -86,7 +86,7 @@ export function Work() {
   return (
     <section
       id="work"
-      className="pad relative py-32"
+      className="pad relative py-24 md:py-32"
       onPointerMove={(e) => {
         x.set(e.clientX);
         y.set(e.clientY);
@@ -97,10 +97,10 @@ export function Work() {
           <Accent className="-top-8 left-[38%] text-[clamp(2rem,4vw,4rem)]">freelance</Accent>
           <RevealLines lines={["Selected", "work"]} />
         </h2>
-        <p className="max-w-sm text-cream/70">Brand sites and products I&apos;ve designed and shipped end-to-end for clients. Hover to peek, click to visit.</p>
+        <p className="max-w-sm text-cream/70">Brand sites and products I&apos;ve designed and shipped end-to-end for clients. Each one opens the live site.</p>
       </div>
 
-      <ul className="border-t border-cream/20" onPointerLeave={() => setActive(null)}>
+      <ul className="border-t border-cream/20 pointer-coarse:md:grid pointer-coarse:md:grid-cols-2 pointer-coarse:md:gap-x-8" onPointerLeave={() => setActive(null)}>
         {projects.map((p, i) => (
           <li key={p.title} className="border-b border-cream/20">
             <a
@@ -109,22 +109,22 @@ export function Work() {
               rel="noreferrer"
               data-cursor="Visit"
               onPointerEnter={() => setActive(i)}
-              className="group grid gap-4 py-8 md:grid-cols-[1fr_auto] md:items-center md:py-10"
+              className="group grid gap-4 py-8 pointer-fine:md:grid-cols-[1fr_auto] pointer-fine:md:items-center pointer-fine:md:py-10"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.image} alt={`${p.title} website`} className="aspect-[16/10] w-full rounded-2xl object-cover object-top md:hidden" />
-              <div className="flex items-baseline gap-5 transition-transform duration-500 ease-[cubic-bezier(.76,0,.24,1)] md:group-hover:translate-x-6">
+              <img src={p.image} alt={`${p.title} website`} className="aspect-[16/10] w-full rounded-2xl object-cover object-top pointer-fine:md:hidden" />
+              <div className="flex min-w-0 items-baseline gap-4 transition-transform duration-500 ease-[cubic-bezier(.76,0,.24,1)] md:gap-5 pointer-fine:md:group-hover:translate-x-6">
                 <span className="display text-sm text-brand">0{i + 1}</span>
-                <div>
-                  <h3 className="display text-[clamp(2.2rem,6.5vw,6.5rem)] transition-colors duration-300 md:group-hover:text-brand">{p.title}</h3>
-                  <p className="mt-3 max-w-xl text-sm text-cream/60 md:hidden">{p.desc}</p>
+                <div className="min-w-0">
+                  <h3 className="display text-[clamp(2rem,6.5vw,6.5rem)] transition-colors duration-300 pointer-coarse:md:text-[clamp(1.6rem,3.6vw,2.6rem)] pointer-fine:md:group-hover:text-brand">{p.title}</h3>
+                  <p className="mt-3 max-w-xl text-sm text-cream/60 pointer-fine:md:hidden">{p.desc}</p>
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-3 md:flex-col md:items-end">
+              <div className="flex flex-wrap items-center gap-3 pointer-fine:md:flex-col pointer-fine:md:items-end">
                 <span className="display text-xs text-cream/60">
                   {p.kind} · {p.year}
                 </span>
-                <span className="flex flex-wrap gap-2 md:justify-end">
+                <span className="flex flex-wrap gap-2 pointer-fine:md:justify-end">
                   {p.tech.map((t) => (
                     <span key={t} className="rounded-full border border-cream/25 px-3 py-1 text-xs">
                       {t}
@@ -138,7 +138,7 @@ export function Work() {
       </ul>
 
       {/* Cursor-following preview (desktop) */}
-      <motion.div className="pointer-events-none fixed left-0 top-0 z-30 hidden md:block" style={{ x, y, rotate, translateX: "-50%", translateY: "-50%" }}>
+      <motion.div className="pointer-events-none fixed left-0 top-0 z-30 hidden pointer-fine:md:block" style={{ x, y, rotate, translateX: "-50%", translateY: "-50%" }}>
         <AnimatePresence>
           {active !== null && (
             <motion.div
@@ -198,13 +198,13 @@ export function Impact() {
           {wins.map((w, i) => (
             <div
               key={w.big}
-              className={`flex h-[52svh] w-[min(80vw,26rem)] shrink-0 flex-col justify-between rounded-[2rem] p-8 ${i % 2 ? "bg-ink text-cream" : "bg-cream text-ink"}`}
+              className={`flex h-[min(52svh,26rem)] w-[min(78vw,26rem)] shrink-0 flex-col justify-between rounded-[1.75rem] p-6 sm:p-8 ${i % 2 ? "bg-ink text-cream" : "bg-cream text-ink"}`}
               style={{ rotate: `${i % 2 ? 2 : -2}deg` }}
             >
               <span className="display text-xs opacity-60">0{i + 1} / 0{wins.length}</span>
               <div>
-                <p className="display whitespace-nowrap text-[clamp(2.8rem,5vw,4.6rem)] text-brand">{w.big}</p>
-                <p className="mt-4 text-lg font-semibold leading-snug">{w.small}</p>
+                <p className="display whitespace-nowrap text-[clamp(2.3rem,4.6vw,4.4rem)] text-brand">{w.big}</p>
+                <p className="mt-3 text-base font-semibold leading-snug sm:mt-4 sm:text-lg">{w.small}</p>
               </div>
             </div>
           ))}
@@ -218,15 +218,15 @@ export function Impact() {
 }
 
 const floaters = [
-  { title: "Invoice paid", sub: "₹45,000 · via UPI", dot: "bg-emerald-400", pos: "-left-4 top-[18%] md:-left-10", speed: -60 },
-  { title: "Proposal opened", sub: "Priya viewed · just now", dot: "bg-sky", pos: "-right-4 top-[8%] md:-right-12", speed: -120 },
-  { title: "Contract signed", sub: "OTP verified · IT Act 2000", dot: "bg-brand", pos: "-right-2 bottom-[10%] md:-right-8", speed: -30 },
+  { title: "Invoice paid", sub: "₹45,000 · via UPI", dot: "bg-emerald-400", pos: "left-3 top-[18%] xl:-left-10", speed: -60 },
+  { title: "Proposal opened", sub: "Priya viewed · just now", dot: "bg-sky", pos: "right-3 top-[8%] xl:-right-12", speed: -120 },
+  { title: "Contract signed", sub: "OTP verified · IT Act 2000", dot: "bg-brand", pos: "right-3 bottom-[10%] xl:-right-8", speed: -30 },
 ];
 
 function Floater({ f, progress }: { f: (typeof floaters)[number]; progress: MotionValue<number> }) {
   const y = useTransform(progress, [0, 1], [0, f.speed]);
   return (
-    <motion.div style={{ y }} className={`absolute z-10 hidden rounded-2xl border border-cream/10 bg-ink/90 px-4 py-3 shadow-2xl backdrop-blur sm:block ${f.pos}`}>
+    <motion.div style={{ y }} className={`absolute z-10 hidden rounded-2xl border border-cream/10 bg-ink/90 px-4 py-3 shadow-2xl backdrop-blur md:block ${f.pos}`}>
       <p className="flex items-center gap-2 text-sm font-bold">
         <span className={`size-2 rounded-full ${f.dot}`} />
         {f.title}
@@ -246,8 +246,8 @@ export function Venture() {
   const glow = useTransform(enter, [0, 1], [0, 1]);
 
   return (
-    <section id="clearwork" className="pad relative overflow-hidden pb-20 pt-36">
-      <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:items-end">
+    <section id="clearwork" className="pad relative overflow-hidden pb-16 pt-24 md:pb-20 md:pt-36">
+      <div className="grid gap-10 xl:grid-cols-[1.3fr_1fr] xl:items-end xl:gap-12">
         <div>
           <p className="mb-10 flex items-center gap-3">
             <span className="display text-[0.7rem] text-cream/50">(Now building)</span>
@@ -267,10 +267,10 @@ export function Venture() {
             />
           </h2>
         </div>
-        <Reveal className="lg:pb-4">
+        <Reveal className="md:grid md:grid-cols-2 md:items-end md:gap-10 xl:block xl:pb-4">
           <p className="marker -rotate-2 text-2xl text-brand">{venture.tagline}</p>
           <p className="mt-5 max-w-md text-lg leading-relaxed text-cream/70">{venture.pitch}</p>
-          <div className="mt-8 flex items-center gap-8">
+          <div className="mt-8 flex items-start gap-6 sm:gap-8 md:col-start-2 md:row-start-1 md:row-span-2 md:mt-0 xl:mt-8">
             {venture.facts.map((f) => (
               <div key={f.label}>
                 <p className="display text-3xl">{f.value}</p>
@@ -282,7 +282,7 @@ export function Venture() {
       </div>
 
       {/* Product reveal */}
-      <div ref={frame} className="relative mx-auto mt-24 max-w-6xl [perspective:1600px]">
+      <div ref={frame} className="relative mx-auto mt-16 max-w-6xl [perspective:1600px] md:mt-24">
         <motion.div aria-hidden style={{ opacity: glow }} className="absolute -inset-x-10 -bottom-16 top-1/3 -z-10 rounded-full bg-brand/25 blur-[100px]" />
         <motion.a
           href={venture.href}
@@ -309,7 +309,7 @@ export function Venture() {
         ))}
       </div>
 
-      <div className="mx-auto mt-20 grid max-w-6xl gap-px overflow-hidden rounded-3xl border border-cream/10 bg-cream/10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto mt-14 grid max-w-6xl md:mt-20 gap-px overflow-hidden rounded-3xl border border-cream/10 bg-cream/10 sm:grid-cols-2 lg:grid-cols-4">
         {venture.features.map((f, i) => (
           <div key={f.title} className="bg-ink">
             <Reveal delay={i * 0.06} className="h-full p-7">

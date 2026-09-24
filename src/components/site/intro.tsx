@@ -45,12 +45,14 @@ export function Loader() {
 
 export function Nav() {
   const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const last = useRef(0);
   useEffect(() => {
     const onScroll = () => {
       const y = scrollY;
       setHidden(y > 200 && y > last.current);
+      setScrolled(y > 40);
       last.current = y;
     };
     addEventListener("scroll", onScroll, { passive: true });
@@ -60,24 +62,26 @@ export function Nav() {
   return (
     <>
       <motion.header
-        className="pad fixed inset-x-0 top-0 z-50 flex items-center justify-between py-5 mix-blend-difference"
+        className={`pad fixed inset-x-0 top-0 z-50 flex items-center justify-between transition-[background-color,padding,backdrop-filter] duration-500 ${
+          scrolled && !open ? "bg-ink/75 py-3.5 backdrop-blur-md" : "py-5"
+        }`}
         animate={{ y: hidden && !open ? "-120%" : "0%" }}
         transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
       >
         <a href="#top" className="marker text-3xl text-cream" aria-label="Home">
-          MV<span className="text-brand">.</span>
+          MV<span className={`transition-colors ${open ? "text-ink" : "text-brand"}`}>.</span>
         </a>
-        <nav className="hidden gap-8 md:flex">
+        <nav className="hidden gap-8 lg:flex">
           {links.map((l) => (
             <a key={l.href} href={l.href} className="display text-xs text-cream">
               <RollText>{l.label}</RollText>
             </a>
           ))}
         </nav>
-        <button onClick={() => setOpen(!open)} className="display text-xs text-cream md:hidden" aria-expanded={open}>
+        <button onClick={() => setOpen(!open)} className="display -mr-2 p-2 text-xs text-cream lg:hidden" aria-expanded={open} aria-controls="mobile-menu">
           {open ? "Close" : "Menu"}
         </button>
-        <a href={`mailto:${personal.email}`} className="display hidden text-xs text-cream md:block">
+        <a href={`mailto:${personal.email}`} className="display hidden text-xs text-cream lg:block">
           <RollText>Let&apos;s talk ↗</RollText>
         </a>
       </motion.header>
@@ -85,7 +89,8 @@ export function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="pad fixed inset-0 z-40 flex flex-col justify-center gap-2 bg-brand text-ink"
+            id="mobile-menu"
+            className="pad fixed inset-0 z-40 flex flex-col justify-center gap-3 bg-brand text-ink"
             initial={{ clipPath: "circle(0% at 90% 4%)" }}
             animate={{ clipPath: "circle(150% at 90% 4%)" }}
             exit={{ clipPath: "circle(0% at 90% 4%)" }}
@@ -96,7 +101,7 @@ export function Nav() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="display text-6xl"
+                className="display text-[clamp(2.6rem,11vw,5rem)]"
                 initial={{ opacity: 0, x: -40 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 + i * 0.07 }}
@@ -172,7 +177,7 @@ export function Hero() {
       </motion.div>
 
       <motion.div
-        className="grid gap-8 border-t border-cream/15 pt-6 text-sm md:grid-cols-3 md:items-end"
+        className="grid gap-6 border-t border-cream/15 pt-6 text-sm sm:grid-cols-2 lg:grid-cols-3 lg:items-end"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: d + 1.1, duration: 1 }}
@@ -180,14 +185,14 @@ export function Hero() {
         <p className="max-w-xs leading-relaxed text-cream/60">
           Distributed systems, AI-powered products and data platforms — 4+ years at GoDaddy, Swiggy &amp; PeopleStrong.
         </p>
-        <p className="flex items-center gap-2 text-cream/60 md:justify-center">
+        <p className="flex items-center gap-2 whitespace-nowrap text-cream/60 sm:justify-end lg:justify-center">
           <span className="relative flex size-2">
             <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/70" />
             <span className="relative size-2 rounded-full bg-emerald-400" />
           </span>
           SDE 2 @ {personal.company} · <Clock />
         </p>
-        <div className="flex gap-8 md:justify-end">
+        <div className="flex gap-8 sm:col-span-2 lg:col-span-1 lg:justify-end">
           <a href="#work" className="display text-xs">
             <RollText>Selected work ↓</RollText>
           </a>
