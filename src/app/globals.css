@@ -1,26 +1,117 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
+/* Palette lifted from lxlcreative.co.uk swatches */
 @theme inline {
+  --color-brand: #ff5121;
+  --color-ink: #27201d;
+  --color-cream: #fcf2bd;
+  --color-berry: #760021;
+  --color-sky: #e2f2fd;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-input: var(--input);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-archivo);
+  --font-marker: var(--font-marker);
+  --radius-lg: var(--radius);
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% - var(--gap))); }
+  }
+  @keyframes marquee-vertical {
+    from { transform: translateY(0); }
+    to { transform: translateY(calc(-100% - var(--gap))); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+  --background: #27201d;
+  --foreground: #fcf2bd;
+  --border: rgb(252 242 189 / 0.2);
+  --ring: #ff5121;
+  --primary: #ff5121;
+  --primary-foreground: #27201d;
+  --secondary: #fcf2bd;
+  --secondary-foreground: #27201d;
+  --muted: #332a26;
+  --muted-foreground: rgb(252 242 189 / 0.6);
+  --accent: #ff5121;
+  --accent-foreground: #27201d;
+  --destructive: #ea384c;
+  --input: rgb(252 242 189 / 0.2);
+  --radius: 1.25rem;
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { @apply font-sans; }
+  body { @apply bg-ink text-cream; overflow-x: clip; }
+  ::selection { background: var(--color-brand); color: var(--color-ink); }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  @media (hover: hover) and (pointer: fine) {
+    body, a, button { cursor: none; }
+  }
+}
+
+@layer utilities {
+  /* Wide, heavy, uppercase — stands in for "Owners Wide" */
+  .display {
+    font-family: var(--font-archivo);
+    font-variation-settings: "wdth" 125;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  /* Rough marker accent, rotated over headlines — stands in for "Scribo Rough" */
+  .marker {
+    font-family: var(--font-marker);
+    text-transform: none;
+    line-height: 1;
+    font-weight: 400;
+  }
+  .pad { padding-inline: clamp(1rem, 4vw, 3.5rem); }
+}
+
+/* Film grain overlay */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1s steps(6) infinite;
+}
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-5%, 4%); }
+  40% { transform: translate(4%, -3%); }
+  60% { transform: translate(-3%, -5%); }
+  80% { transform: translate(5%, 3%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain::after { animation: none; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
