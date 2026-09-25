@@ -1,4 +1,5 @@
-import { Hero, Loader, Nav } from "@/components/site/intro";
+import { Hero } from "@/components/site/hero";
+import { Loader, Nav } from "@/components/site/intro";
 import { About, Bands, Capabilities } from "@/components/site/about";
 import { Experience, Impact, Venture, Work } from "@/components/site/work";
 import { Contact, Stack } from "@/components/site/contact";

@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { personal } from "@/lib/data";
-import { RevealLines, RollText } from "./motion-kit";
+import { RollText } from "./motion-kit";
 
 export const INTRO_DELAY = 1.9;
 const links = [
@@ -113,94 +113,5 @@ export function Nav() {
         )}
       </AnimatePresence>
     </>
-  );
-}
-
-function Clock() {
-  const [t, setT] = useState("");
-  useEffect(() => {
-    const f = () => setT(new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit" }));
-    f();
-    const id = setInterval(f, 15000);
-    return () => clearInterval(id);
-  }, []);
-  return <span suppressHydrationWarning>{t} IST</span>;
-}
-
-export function Hero() {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const d = INTRO_DELAY;
-
-  return (
-    <section id="top" ref={ref} className="pad relative flex min-h-svh flex-col justify-between pb-10 pt-32">
-      {/* One quiet light source, bottom-right */}
-      <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60vw_50vw_at_85%_110%,rgb(255_81_33/0.16),transparent_70%)]" />
-
-      <motion.div
-        className="flex items-center gap-3"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: d + 0.2, duration: 0.8 }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={personal.photo} alt="" className="size-9 rounded-full object-cover object-[50%_25%] ring-1 ring-cream/20" />
-        <span className="text-sm text-cream/70">
-          {personal.name} <span className="text-cream/35">— Software Engineer</span>
-        </span>
-      </motion.div>
-
-      <motion.div style={{ y, opacity: fade }} className="my-16">
-        <h1 className="display text-[clamp(2.6rem,8.2vw,9rem)] !leading-[0.95]">
-          <RevealLines
-            delay={d}
-            lines={[
-              <span key="a" className="font-light [font-variation-settings:'wdth'_110] text-cream/85">
-                Building systems
-              </span>,
-              <span key="b">
-                that scale<span className="text-brand">.</span>
-              </span>,
-            ]}
-          />
-        </h1>
-        <motion.p
-          className="marker mt-6 -rotate-3 text-[clamp(1.4rem,2.4vw,2.2rem)] text-brand"
-          initial={{ opacity: 0, clipPath: "inset(0 100% 0 0)" }}
-          animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)" }}
-          transition={{ delay: d + 1, duration: 1.2, ease: [0.65, 0, 0.35, 1] }}
-        >
-          — Maharshi
-        </motion.p>
-      </motion.div>
-
-      <motion.div
-        className="grid gap-6 border-t border-cream/15 pt-6 text-sm sm:grid-cols-2 lg:grid-cols-3 lg:items-end"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: d + 1.1, duration: 1 }}
-      >
-        <p className="max-w-xs leading-relaxed text-cream/60">
-          Distributed systems, AI-powered products and data platforms — 4+ years at GoDaddy, Swiggy &amp; PeopleStrong.
-        </p>
-        <p className="flex items-center gap-2 whitespace-nowrap text-cream/60 sm:justify-end lg:justify-center">
-          <span className="relative flex size-2">
-            <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/70" />
-            <span className="relative size-2 rounded-full bg-emerald-400" />
-          </span>
-          SDE 2 @ {personal.company} · <Clock />
-        </p>
-        <div className="flex gap-8 sm:col-span-2 lg:col-span-1 lg:justify-end">
-          <a href="#work" className="display text-xs">
-            <RollText>Selected work ↓</RollText>
-          </a>
-          <a href={personal.resume} target="_blank" rel="noreferrer" className="display text-xs text-brand">
-            <RollText>Resume ↗</RollText>
-          </a>
-        </div>
-      </motion.div>
-    </section>
   );
 }
