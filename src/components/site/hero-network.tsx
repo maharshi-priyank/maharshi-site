@@ -3,7 +3,6 @@ import { useEffect, useRef, type RefObject } from "react";
 
 type Node = { x: number; y: number; vx: number; vy: number; r: number; born: number };
 type Packet = { a: number; b: number; t: number; speed: number; toHub: boolean };
-export type NetStats = { nodes: number; edges: number; fps: number };
 
 const CREAM = "252,242,189";
 const BRAND = "255,81,33";
@@ -14,14 +13,10 @@ const MAX_NODES = 140;
 /**
  * Faint distributed-system graph: drifting nodes, proximity edges, orange request packets.
  * The element in `hubRef` (the headline's full stop) acts as a hub — nearby nodes link to it and
- * it pulses when a packet arrives. Clicking adds a node. Reports live stats via `onStats`.
+ * it pulses when a packet arrives. Clicking adds a node.
  */
-export function HeroNetwork({ hubRef, onStats }: { hubRef: RefObject<HTMLElement | null>; onStats?: (s: NetStats) => void }) {
+export function HeroNetwork({ hubRef }: { hubRef: RefObject<HTMLElement | null> }) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const statsCb = useRef(onStats);
-  useEffect(() => {
-    statsCb.current = onStats;
-  }, [onStats]);
 
   useEffect(() => {
     const cvs = ref.current!;
@@ -32,7 +27,7 @@ export function HeroNetwork({ hubRef, onStats }: { hubRef: RefObject<HTMLElement
     const edges: number[] = []; // flat [a,b,a,b…], rebuilt each frame
     const mouse = { x: -1e4, y: -1e4 };
     let w = 0, h = 0, base = 0, visible = true, raf = 0, last = performance.now();
-    let spawnAcc = 0, frames = 0, fpsT = last, fps = 60;
+    let spawnAcc = 0;
 
     const make = (x: number, y: number, born = -1e4): Node => ({
       x, y, vx: (Math.random() - 0.5) * 0.18, vy: (Math.random() - 0.5) * 0.18, r: 0.9 + Math.random() * 1.3, born,
@@ -140,12 +135,6 @@ export function HeroNetwork({ hubRef, onStats }: { hubRef: RefObject<HTMLElement
         ctx.fillStyle = `rgb(${BRAND})`; ctx.beginPath(); ctx.arc(x, y, 1.7, 0, Math.PI * 2); ctx.fill();
       }
 
-      // stats
-      frames++;
-      if (now - fpsT > 500) {
-        fps = Math.round((frames * 1000) / (now - fpsT)); frames = 0; fpsT = now;
-        statsCb.current?.({ nodes: nodes.length, edges: edges.length / 2, fps });
-      }
       if (visible && !reduce) raf = requestAnimationFrame(frame);
     };
 

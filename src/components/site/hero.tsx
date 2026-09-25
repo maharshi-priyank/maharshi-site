@@ -2,7 +2,7 @@
 import { Fragment, useEffect, useRef, useState, type RefObject } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { personal } from "@/lib/data";
-import { HeroNetwork, type NetStats } from "./hero-network";
+import { HeroNetwork } from "./hero-network";
 import { INTRO_DELAY } from "./intro";
 import { RevealLines, RollText } from "./motion-kit";
 
@@ -91,33 +91,31 @@ function Clock() {
   return <span suppressHydrationWarning>{t} IST</span>;
 }
 
-/** Real numbers only: the network's own node/edge count, measured fps, and this page's load time. */
-function Telemetry({ sinkRef }: { sinkRef: RefObject<((s: NetStats) => void) | null> }) {
-  const [s, setS] = useState<NetStats | null>(null);
-  const [load, setLoad] = useState<string | null>(null);
-  const [touch, setTouch] = useState(false);
+const ROLES = ["Software Engineer", "Backend Developer", "Distributed Systems", "AI Integrations", "Full-stack Builder"];
+
+/** Terminal prompt that types and deletes each role in turn. */
+function TypedRole({ delay }: { delay: number }) {
+  const [text, setText] = useState(ROLES[0]);
   useEffect(() => {
-    sinkRef.current = setS;
-    const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
-    const id = setTimeout(() => {
-      if (nav) setLoad((nav.domContentLoadedEventEnd / 1000).toFixed(2));
-      setTouch(!matchMedia("(pointer: fine)").matches);
-    }, 0);
-    return () => { clearTimeout(id); sinkRef.current = null; };
-  }, [sinkRef]);
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let role = 0, i = ROLES[0].length, deleting = true, id = 0;
+    const step = () => {
+      if (deleting) {
+        if (--i === 0) { deleting = false; role = (role + 1) % ROLES.length; }
+      } else if (++i === ROLES[role].length) deleting = true;
+      setText(ROLES[role].slice(0, i));
+      const hold = deleting && i === ROLES[role].length; // fully typed: pause before erasing
+      id = window.setTimeout(step, hold ? 2200 : deleting ? 38 : 70 + Math.random() * 50);
+    };
+    id = window.setTimeout(step, delay * 1000 + 2600);
+    return () => clearTimeout(id);
+  }, [delay]);
   return (
-    <div className="font-mono text-[0.66rem] uppercase leading-relaxed tracking-[0.08em] text-cream/45" aria-live="off">
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="flex items-center gap-1.5 text-cream/70">
-          <span className="size-1.5 animate-pulse rounded-full bg-emerald-400" /> live
-        </span>
-        <span>{s ? s.nodes : "—"} nodes</span>
-        <span>{s ? s.edges : "—"} edges</span>
-        <span>{s ? s.fps : "—"} fps</span>
-        {load && <span>dom {load}s</span>}
-      </p>
-      <p className="mt-1 text-brand/80">↳ {touch ? "tap" : "click"} anywhere to add a node</p>
-    </div>
+    <p className="font-mono text-[clamp(1rem,1.7vw,1.5rem)] text-cream/85" aria-label="Software Engineer">
+      <span className="mr-3 text-brand">&gt;</span>
+      <span aria-hidden>{text}</span>
+      <span aria-hidden className="ml-0.5 inline-block h-[1.05em] w-[0.55em] translate-y-[0.18em] animate-[blink_1.05s_steps(1)_infinite] bg-brand" />
+    </p>
   );
 }
 
@@ -125,7 +123,6 @@ export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const h1 = useRef<HTMLHeadingElement>(null);
   const hub = useRef<HTMLSpanElement>(null);
-  const sink = useRef<((s: NetStats) => void) | null>(null);
   useProximityType(h1);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -144,7 +141,7 @@ export function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: d + 0.3, duration: 2 }}
       >
-        <HeroNetwork hubRef={hub} onStats={(s) => sink.current?.(s)} />
+        <HeroNetwork hubRef={hub} />
       </motion.div>
       {/* keep the type legible and melt into the next section */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(70%_55%_at_30%_55%,rgb(39_32_29/0.75),transparent_75%)]" />
@@ -160,15 +157,23 @@ export function Hero() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={personal.photo} alt="" className="size-9 rounded-full object-cover object-[50%_25%] ring-1 ring-cream/20" />
           <span className="text-sm text-cream/70">
-            {personal.name} <span className="hidden text-cream/35 sm:inline">— Software Engineer</span>
+            {personal.name}
           </span>
         </span>
         <span className="hidden items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.08em] text-cream/50 sm:flex">
-          SDE 2 @ {personal.company} · <Clock />
+          {personal.location} · <Clock />
         </span>
       </motion.div>
 
       <motion.div style={{ y, opacity: fade }} className="my-14">
+        <motion.p
+          className="mb-6 font-mono text-[0.72rem] uppercase tracking-[0.14em] text-cream/50 md:mb-8 md:text-xs"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: d + 0.1, duration: 0.8 }}
+        >
+          <span className="text-brand">{"//"}</span> software engineer @ {personal.company.toLowerCase()}
+        </motion.p>
         <h1 ref={h1} aria-label="Building systems that scale." className="display text-[clamp(2.5rem,7.8vw,8.6rem)] !leading-[0.98]">
           <RevealLines
             delay={d}
@@ -185,14 +190,9 @@ export function Hero() {
             ]}
           />
         </h1>
-        <motion.p
-          className="marker mt-6 -rotate-3 text-[clamp(1.4rem,2.4vw,2.2rem)] text-brand"
-          initial={{ opacity: 0, clipPath: "inset(0 100% 0 0)" }}
-          animate={{ opacity: 1, clipPath: "inset(0 0% 0 0)" }}
-          transition={{ delay: d + 1, duration: 1.2, ease: [0.65, 0, 0.35, 1] }}
-        >
-          — Maharshi
-        </motion.p>
+        <motion.div className="mt-8 md:mt-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: d + 0.9, duration: 0.8 }}>
+          <TypedRole delay={d} />
+        </motion.div>
       </motion.div>
 
       <motion.div
@@ -204,7 +204,14 @@ export function Hero() {
         <p className="max-w-xs leading-relaxed text-cream/60">
           Distributed systems, AI-powered products and data platforms — 4+ years at GoDaddy, Swiggy &amp; PeopleStrong.
         </p>
-        <Telemetry sinkRef={sink} />
+        <p className="font-mono text-[0.68rem] uppercase leading-relaxed tracking-[0.1em] text-cream/45">
+          {["Go", "Java", "TypeScript", "Kafka", "AWS", "Next.js"].map((t, i) => (
+            <span key={t}>
+              {i > 0 && <span className="mx-2 text-brand/70">·</span>}
+              {t}
+            </span>
+          ))}
+        </p>
         <div className="flex gap-8 sm:col-span-2 lg:col-span-1 lg:justify-end">
           <a href="#work" className="display text-xs">
             <RollText>Selected work ↓</RollText>
