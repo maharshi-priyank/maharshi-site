@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { personal } from "@/lib/data";
 import { HeroNetwork } from "./hero-network";
 import { INTRO_DELAY } from "./intro";
-import { RevealLines, RollText } from "./motion-kit";
+import { Arrow, RevealLines, RollText } from "./motion-kit";
 
 // Variable-font axes each line morphs between (resting → under the cursor).
 const AXES = {
@@ -213,11 +213,13 @@ export function Hero() {
           ))}
         </p>
         <div className="flex gap-8 sm:col-span-2 lg:col-span-1 lg:justify-end">
-          <a href="#work" className="display text-xs">
-            <RollText>Selected work ↓</RollText>
+          <a href="#work" className="group/arrow display flex items-center gap-1.5 text-xs">
+            <RollText>Selected work</RollText>
+            <Arrow dir="down" />
           </a>
-          <a href={personal.resume} target="_blank" rel="noreferrer" className="display text-xs text-brand">
-            <RollText>Resume ↗</RollText>
+          <a href={personal.resume} target="_blank" rel="noreferrer" className="group/arrow display flex items-center gap-1.5 text-xs text-brand">
+            <RollText>Resume</RollText>
+            <Arrow />
           </a>
         </div>
       </motion.div>

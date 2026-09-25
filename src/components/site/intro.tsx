@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { personal } from "@/lib/data";
-import { RollText } from "./motion-kit";
+import { Arrow, RollText } from "./motion-kit";
 
 export const INTRO_DELAY = 1.9;
 const links = [
@@ -81,8 +81,9 @@ export function Nav() {
         <button onClick={() => setOpen(!open)} className="display -mr-2 p-2 text-xs text-cream lg:hidden" aria-expanded={open} aria-controls="mobile-menu">
           {open ? "Close" : "Menu"}
         </button>
-        <a href={`mailto:${personal.email}`} className="display hidden text-xs text-cream lg:block">
-          <RollText>Let&apos;s talk ↗</RollText>
+        <a href={`mailto:${personal.email}`} className="group/arrow display hidden items-center gap-1.5 text-xs text-cream lg:flex">
+          <RollText>Let&apos;s talk</RollText>
+          <Arrow />
         </a>
       </motion.header>
 

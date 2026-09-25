@@ -1,6 +1,7 @@
 "use client";
 import { useRef, type ReactNode } from "react";
 import { motion, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
+import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ease = [0.76, 0, 0.24, 1] as const;
@@ -94,6 +95,20 @@ export function Magnetic({ children, strength = 0.35 }: { children: ReactNode; s
   );
 }
 
+/**
+ * SVG arrow. Unicode arrows (↗ etc.) aren't in our web fonts, and iOS falls back to its emoji font
+ * for them — so always use this instead. Nudges toward its direction when an ancestor `group/arrow` is hovered.
+ */
+export function Arrow({ dir = "up-right", className }: { dir?: "up-right" | "down" | "up"; className?: string }) {
+  const Icon = { "up-right": ArrowUpRight, down: ArrowDown, up: ArrowUp }[dir];
+  const nudge = {
+    "up-right": "group-hover/arrow:-translate-y-0.5 group-hover/arrow:translate-x-0.5",
+    down: "group-hover/arrow:translate-y-0.5",
+    up: "group-hover/arrow:-translate-y-0.5",
+  }[dir];
+  return <Icon aria-hidden strokeWidth={2.4} className={cn("inline-block size-[1.15em] shrink-0 transition-transform duration-300", nudge, className)} />;
+}
+
 /** Pill button in the LxL style. */
 export function Pill({ href, children, variant = "brand", ...rest }: { href: string; children: string; variant?: "brand" | "cream" | "ink" } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const styles = {
@@ -103,9 +118,9 @@ export function Pill({ href, children, variant = "brand", ...rest }: { href: str
   }[variant];
   return (
     <Magnetic>
-      <a href={href} {...rest} className={cn("display inline-flex h-14 items-center gap-3 rounded-full px-7 text-sm transition-[filter] hover:brightness-90", styles)}>
+      <a href={href} {...rest} className={cn("group/arrow display inline-flex h-14 items-center gap-3 rounded-full px-7 text-sm transition-[filter] hover:brightness-90", styles)}>
         <RollText>{children}</RollText>
-        <span aria-hidden>↗</span>
+        <Arrow />
       </a>
     </Magnetic>
   );

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { personal, stack } from "@/lib/data";
-import { Accent, Magnetic, Pill, Reveal, RevealLines, RollText } from "./motion-kit";
+import { Accent, Arrow, Magnetic, Pill, Reveal, RevealLines, RollText } from "./motion-kit";
 
 export function Stack() {
   return (
@@ -132,8 +132,9 @@ export function Contact() {
           </Col>
           <Col title="Elsewhere">
             {personal.socials.map((s) => (
-              <a key={s.label} href={s.href} target="_blank" rel="noreferrer">
-                <RollText>{`${s.label} ↗`}</RollText>
+              <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className="group/arrow flex items-center gap-1">
+                <RollText>{s.label}</RollText>
+                <Arrow className="opacity-70" />
               </a>
             ))}
           </Col>
@@ -185,8 +186,8 @@ export function Contact() {
           </span>
           <span className="opacity-70">Engineered in Pune, India — built to scale, like everything I ship.</span>
           <Magnetic>
-            <a href="#top" aria-label="Back to top" className="flex size-12 items-center justify-center rounded-full bg-ink text-lg text-cream transition-transform hover:-translate-y-1">
-              ↑
+            <a href="#top" aria-label="Back to top" className="group/arrow flex size-12 items-center justify-center rounded-full bg-ink text-lg text-cream transition-transform hover:-translate-y-1">
+              <Arrow dir="up" />
             </a>
           </Magnetic>
         </div>
